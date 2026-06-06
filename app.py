@@ -90,8 +90,8 @@ def build_where(f):
     occ = f.get("occupancy")
     if occ == "Owner-occupied — strict match":
         clauses.append("owner_occupied = TRUE")
-    elif occ == "Owner-occupied — broad (local FL owners)":  # max recall: keeps every possible owner-occupant
-        clauses.append("owner_occupancy IN ('owner_occupied','fl_owner')")
+    elif occ == "Owner-occupied — broad (local owners)":  # max recall: keeps every possible owner-occupant
+        clauses.append("owner_occupancy IN ('owner_occupied','fl_owner','instate_owner')")
     elif occ == "Exclude out-of-state owners":
         clauses.append("owner_occupancy <> 'out_of_state'")
     elif occ == "Out-of-state owners only":
@@ -194,7 +194,7 @@ occupancy = st.sidebar.selectbox(
     "Owner occupancy",
     ["Any",
      "Owner-occupied — strict match",
-     "Owner-occupied — broad (local FL owners)",
+     "Owner-occupied — broad (local owners)",
      "Exclude out-of-state owners",
      "Out-of-state owners only"],
     help="STRICT = owner's mailing address matches the building (high precision, misses "

@@ -1,34 +1,38 @@
 #!/usr/bin/env bash
-# Railway entrypoint: populate the volume on first boot, then launch the app.
-# The data file is too large for the image, so it's pulled once from a public
-# GitHub release asset onto the persistent volume. Subsequent boots skip it.
-# Uses Python (always present in this image) — the runtime has no curl/wget.
+# Railway entrypoint: sync state data files onto the volume, then launch the app.
+# Each state's parquet is pulled once from a public GitHub release asset. Per-file
+# version markers mean adding/refreshing one state never re-downloads the others.
+# Uses Python (always present) — the runtime image has no curl/wget.
 set -euo pipefail
 
 DATA_DIR="${DATA_DIR:-/data}"
-TARGET="$DATA_DIR/parcels_fl.parquet"
-VERSION="${DATA_VERSION:-1}"          # bump this (and DATA_ASSET_URL) to force a re-download
-MARKER="$DATA_DIR/.data_version"
 mkdir -p "$DATA_DIR"
 
-if [ ! -s "$TARGET" ] || [ "$(cat "$MARKER" 2>/dev/null || echo none)" != "$VERSION" ]; then
-  echo "[bootstrap] data missing or stale (have '$(cat "$MARKER" 2>/dev/null || echo none)', want '$VERSION') — downloading…"
-  python - "$DATA_ASSET_URL" "$TARGET" <<'PY'
+fetch() {  # name  url  version
+  local name="$1" url="$2" ver="${3:-1}"
+  [ -z "$url" ] && { echo "[bootstrap] $name: no URL set, skipping"; return 0; }
+  local target="$DATA_DIR/$name" marker="$DATA_DIR/.ver_$name"
+  if [ -s "$target" ] && [ "$(cat "$marker" 2>/dev/null || echo none)" = "$ver" ]; then
+    echo "[bootstrap] $name v$ver already on volume ($(du -h "$target" | cut -f1)) — skip"
+    return 0
+  fi
+  echo "[bootstrap] $name: downloading v$ver…"
+  python - "$url" "$target" <<'PY'
 import os, sys, urllib.request
 url, target = sys.argv[1], sys.argv[2]
-tmp = target + ".part"          # atomic: never leave a partial file that looks complete
-req = urllib.request.Request(url, headers={
-    "Accept": "application/octet-stream", "User-Agent": "parcel-explorer"})
+tmp = target + ".part"
+req = urllib.request.Request(url, headers={"Accept": "application/octet-stream", "User-Agent": "parcel-explorer"})
 with urllib.request.urlopen(req) as r, open(tmp, "wb") as f:
     while (chunk := r.read(1 << 20)):
         f.write(chunk)
 os.replace(tmp, target)
-print(f"[bootstrap] downloaded {os.path.getsize(target) // 1024 // 1024} MB")
+print(f"[bootstrap] {os.path.basename(target)}: downloaded {os.path.getsize(target)//1024//1024} MB")
 PY
-  echo "$VERSION" > "$MARKER"
-else
-  echo "[bootstrap] data v$VERSION already on volume ($(du -h "$TARGET" | cut -f1)) — skipping download"
-fi
+  echo "$ver" > "$marker"
+}
+
+fetch parcels_fl.parquet "${DATA_ASSET_URL:-}"    "${DATA_VERSION:-1}"
+fetch parcels_tx.parquet "${DATA_ASSET_URL_TX:-}" "${DATA_VERSION_TX:-1}"
 
 exec streamlit run app.py \
   --server.port "${PORT:-8501}" \

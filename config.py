@@ -73,13 +73,27 @@ STATES = {
         "native_labels": FL_DOR_LABELS,
         "native_code_name": "DOR use code",
     },
-    # "TX": {  # future adapter — same canonical columns, different source + crosswalk
-    #     "label": "Texas",
-    #     "data": "data/parcels_tx.parquet",
-    #     "vintage": "2025 CAD certified",
-    #     "source": "Texas county appraisal districts",
-    #     "available": {"bldg_sqft": False, "num_buildings": False, ...},
-    #     "native_labels": {...},
-    #     "native_code_name": "State class code",
-    # },
+    "TX": {
+        "label": "Texas (Harris/Houston)",
+        "data": "data/parcels_tx.parquet",
+        "vintage": "2025 HCAD roll",
+        "source": "Harris Central Appraisal District (HCAD) — Harris County only (more TX counties to come)",
+        "available": {
+            "bldg_sqft": True,        # building_other/res heat_ar, fallback real_acct bld_ar
+            "num_buildings": True,
+            "year_built": True,
+            "land_sqft": True,
+            "market_value": True,
+            "owner_occupancy": True,
+        },
+        "native_labels": {
+            "A1": "Residential single-family", "A2": "Residential", "B1": "Multifamily",
+            "B2": "Multifamily", "C1": "Vacant", "C2": "Vacant", "C3": "Vacant",
+            "F1": "Commercial", "F2": "Industrial", "G1": "Minerals",
+            "J3": "Utility (electric)", "J5": "Utility", "M3": "Mobile home",
+            "O1": "Residential inventory", "X1": "Exempt (institutional/government)",
+            "X2": "Exempt", "X3": "Exempt", "D2": "Acreage/agricultural", "E1": "Rural improvement",
+        },
+        "native_code_name": "HCAD state class",
+    },
 }
