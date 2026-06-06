@@ -9,9 +9,8 @@ TARGET="$DATA_DIR/parcels_fl.parquet"
 mkdir -p "$DATA_DIR"
 
 if [ ! -s "$TARGET" ]; then
-  echo "[bootstrap] $TARGET missing — downloading from release asset…"
+  echo "[bootstrap] $TARGET missing — downloading from public release asset…"
   curl -fSL --retry 3 --retry-delay 2 \
-    -H "Authorization: Bearer ${GH_TOKEN}" \
     -H "Accept: application/octet-stream" \
     "${DATA_ASSET_URL}" -o "$TARGET"
   echo "[bootstrap] downloaded $(du -h "$TARGET" | cut -f1)"
