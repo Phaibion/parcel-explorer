@@ -74,10 +74,10 @@ STATES = {
         "native_code_name": "DOR use code",
     },
     "TX": {
-        "label": "Texas (Harris/Houston)",
+        "label": "Texas",
         "data": "data/parcels_tx.parquet",
-        "vintage": "2025 HCAD roll",
-        "source": "Harris Central Appraisal District (HCAD) — Harris County only (more TX counties to come)",
+        "vintage": "Harris 2025 (HCAD) · Travis 2026 (TCAD)",
+        "source": "Per-county appraisal districts — Harris (HCAD) + Travis (TCAD); more counties rolling in",
         "available": {
             "bldg_sqft": True,        # building_other/res heat_ar, fallback real_acct bld_ar
             "num_buildings": True,
