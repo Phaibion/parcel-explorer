@@ -1,0 +1,11 @@
+# Data files live on the Railway volume / local disk, never in git (too large)
+data/
+*.parquet
+*.csv
+*.zip
+
+__pycache__/
+*.pyc
+.DS_Store
+.venv/
+venv/
