@@ -68,6 +68,7 @@ STATES = {
             "year_built": True,
             "land_sqft": True,
             "market_value": True,
+            "owner_occupancy": True,  # needs owner_addr + site_addr (both present in FL NAL)
         },
         "native_labels": FL_DOR_LABELS,
         "native_code_name": "DOR use code",

@@ -41,3 +41,13 @@ COPY (
   LEFT JOIN read_csv_auto(getenv('COUNTIES_CSV'), types={'CO_NO':'VARCHAR'}) cty
     ON CAST(f.CO_NO AS VARCHAR) = cty.CO_NO
 ) TO 'data/parcels_fl.parquet' (FORMAT parquet, COMPRESSION zstd);
+
+-- Owner-occupancy flags (no explicit owner-occupied field exists for FL commercial;
+-- derived by matching owner mailing address to the site address). Run as a second pass
+-- over the parquet above:
+--   owner_occupied      = exact normalized addr match, OR (same ZIP + same street number +
+--                         one normalized addr is a prefix of the other -> catches "STE 200" diffs)
+--   owner_po_box        = owner mailing address is a PO box (absentee)
+--   owner_out_of_state  = owner_state <> 'FL' (absentee)
+--   owner_occupancy     = 'owner_occupied' | 'absentee' | 'unknown'
+-- See the second-pass query used to add these four columns in the deploy history.

@@ -87,6 +87,16 @@ def build_where(f):
         clauses.append("market_value >= ?")
         params.append(f["value_min"])
 
+    occ = f.get("occupancy")
+    if occ == "Owner-occupied — strict match":
+        clauses.append("owner_occupied = TRUE")
+    elif occ == "Owner-occupied — broad (local FL owners)":  # max recall: keeps every possible owner-occupant
+        clauses.append("owner_occupancy IN ('owner_occupied','fl_owner')")
+    elif occ == "Exclude out-of-state owners":
+        clauses.append("owner_occupancy <> 'out_of_state'")
+    elif occ == "Out-of-state owners only":
+        clauses.append("owner_occupancy = 'out_of_state'")
+
     if f.get("raw_where"):
         clauses.append(f"({f['raw_where']})")  # single-user power filter on any native column
 
@@ -178,6 +188,22 @@ year_max = y2.number_input("Built before", min_value=0, value=0, step=1,
 value_min = st.sidebar.number_input("Min market value ($)", min_value=0, value=0,
                                      step=50000, disabled=not avail["market_value"])
 
+# --- owner occupancy ---
+st.sidebar.subheader("Owner")
+occupancy = st.sidebar.selectbox(
+    "Owner occupancy",
+    ["Any",
+     "Owner-occupied — strict match",
+     "Owner-occupied — broad (local FL owners)",
+     "Exclude out-of-state owners",
+     "Out-of-state owners only"],
+    help="STRICT = owner's mailing address matches the building (high precision, misses "
+         "owners who mail elsewhere). BROAD = strict + any in-state owner — max recall, keeps "
+         "every possible owner-occupant (some local landlords included). Out-of-state owners "
+         "can't be occupying a FL building, so excluding them loses no real owner-occupants.",
+    disabled=not avail.get("owner_occupancy", False),
+)
+
 # --- text search ---
 st.sidebar.subheader("Search")
 owner_like = st.sidebar.text_input("Owner name contains")
@@ -219,6 +245,7 @@ f = {
     "owner_like": owner_like.strip(),
     "city_like": city_like.strip(),
     "zip_like": zip_like.strip(),
+    "occupancy": occupancy if avail.get("owner_occupancy", False) else "Any",
     "raw_where": raw_where.strip(),
 }
 try:
