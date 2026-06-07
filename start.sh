@@ -17,18 +17,31 @@ fetch() {  # name  url  version
     return 0
   fi
   echo "[bootstrap] $name: downloading v$ver…"
-  python - "$url" "$target" <<'PY'
-import os, sys, urllib.request
+  if python - "$url" "$target" <<'PY'
+import os, sys, time, urllib.request
 url, target = sys.argv[1], sys.argv[2]
 tmp = target + ".part"
 req = urllib.request.Request(url, headers={"Accept": "application/octet-stream", "User-Agent": "parcel-explorer"})
-with urllib.request.urlopen(req) as r, open(tmp, "wb") as f:
-    while (chunk := r.read(1 << 20)):
-        f.write(chunk)
-os.replace(tmp, target)
-print(f"[bootstrap] {os.path.basename(target)}: downloaded {os.path.getsize(target)//1024//1024} MB")
+for attempt in range(4):
+    try:
+        with urllib.request.urlopen(req, timeout=120) as r, open(tmp, "wb") as f:
+            while (chunk := r.read(1 << 20)):
+                f.write(chunk)
+        os.replace(tmp, target)
+        print(f"[bootstrap] {os.path.basename(target)}: downloaded {os.path.getsize(target)//1024//1024} MB")
+        sys.exit(0)
+    except Exception as e:
+        print(f"[bootstrap] attempt {attempt+1} failed: {e}", file=sys.stderr)
+        time.sleep(5 * (attempt + 1))
+sys.exit(1)
 PY
-  echo "$ver" > "$marker"
+  then
+    echo "$ver" > "$marker"
+  elif [ -s "$target" ]; then
+    echo "[bootstrap] $name: download failed — keeping existing volume copy, launching anyway"
+  else
+    echo "[bootstrap] $name: download failed and no existing copy — continuing without it"
+  fi
 }
 
 fetch parcels_fl.parquet "${DATA_ASSET_URL:-}"    "${DATA_VERSION:-1}"
