@@ -96,4 +96,20 @@ STATES = {
         },
         "native_code_name": "HCAD state class",
     },
+    "CA": {
+        "label": "California",
+        "data": "data/parcels_ca.parquet",
+        "vintage": "LA County 2025 roll",
+        "source": "County assessors — Los Angeles (open data); more CA counties to come",
+        "available": {
+            "bldg_sqft": True,
+            "num_buildings": True,
+            "year_built": True,
+            "land_sqft": False,        # not in LA open data
+            "market_value": True,
+            "owner_occupancy": False,  # CA open data omits owner name/address (privacy)
+        },
+        "native_labels": {},
+        "native_code_name": "LA use code",
+    },
 }

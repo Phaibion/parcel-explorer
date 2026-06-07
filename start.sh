@@ -33,6 +33,7 @@ PY
 
 fetch parcels_fl.parquet "${DATA_ASSET_URL:-}"    "${DATA_VERSION:-1}"
 fetch parcels_tx.parquet "${DATA_ASSET_URL_TX:-}" "${DATA_VERSION_TX:-1}"
+fetch parcels_ca.parquet "${DATA_ASSET_URL_CA:-}" "${DATA_VERSION_CA:-1}"
 
 exec streamlit run app.py \
   --server.port "${PORT:-8501}" \
