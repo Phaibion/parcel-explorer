@@ -76,8 +76,8 @@ STATES = {
     "TX": {
         "label": "Texas",
         "data": "data/parcels_tx.parquet",
-        "vintage": "Harris/Dallas/Tarrant/Travis/Collin/El Paso/Fort Bend/Cameron",
-        "source": "Per-county appraisal districts — Harris, Dallas, Tarrant, Travis, Collin, El Paso, Fort Bend, Cameron (more rolling in)",
+        "vintage": "10 counties (2025–2026): Harris, Dallas, Tarrant, Travis, Denton, Collin, El Paso, Williamson, Fort Bend, Cameron",
+        "source": "Per-county appraisal districts — 10 metros (DFW, Houston, Austin, El Paso, RGV). San Antonio/Bexar pending.",
         "available": {
             "bldg_sqft": True,        # building_other/res heat_ar, fallback real_acct bld_ar
             "num_buildings": True,
