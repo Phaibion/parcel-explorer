@@ -76,8 +76,8 @@ STATES = {
     "TX": {
         "label": "Texas",
         "data": "data/parcels_tx.parquet",
-        "vintage": "Harris/Dallas/Travis/Collin/El Paso/Fort Bend/Cameron",
-        "source": "Per-county appraisal districts — Harris, Dallas, Travis, Collin, El Paso, Fort Bend, Cameron (more rolling in)",
+        "vintage": "Harris/Dallas/Tarrant/Travis/Collin/El Paso/Fort Bend/Cameron",
+        "source": "Per-county appraisal districts — Harris, Dallas, Tarrant, Travis, Collin, El Paso, Fort Bend, Cameron (more rolling in)",
         "available": {
             "bldg_sqft": True,        # building_other/res heat_ar, fallback real_acct bld_ar
             "num_buildings": True,
