@@ -76,8 +76,8 @@ STATES = {
     "TX": {
         "label": "Texas",
         "data": "data/parcels_tx.parquet",
-        "vintage": "Harris 2025 (HCAD) · Travis 2026 (TCAD)",
-        "source": "Per-county appraisal districts — Harris (HCAD) + Travis (TCAD); more counties rolling in",
+        "vintage": "Harris/Travis/Collin/Fort Bend/Cameron (2024–2026)",
+        "source": "Per-county appraisal districts — Harris, Travis, Collin, Fort Bend, Cameron (more rolling in)",
         "available": {
             "bldg_sqft": True,        # building_other/res heat_ar, fallback real_acct bld_ar
             "num_buildings": True,
