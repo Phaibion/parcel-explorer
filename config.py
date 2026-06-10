@@ -99,15 +99,15 @@ STATES = {
     "CA": {
         "label": "California",
         "data": "data/parcels_ca.parquet",
-        "vintage": "LA County 2025 roll",
-        "source": "County assessors — Los Angeles (open data); more CA counties to come",
+        "vintage": "All 58 counties (2019–2026). ~95% of non-residential buildings have a street address: ~39 counties at parcel level (assessor situs or USA-Structures-flag × county landbase for situs+APN); ~19 counties reverse-geocoded to nearest Overture address point.",
+        "source": "LA+SF assessors (floor sqft); land-use parcels × Overture footprints; FEMA/ORNL USA Structures occupancy class joined to county parcel landbases (situs+APN) or reverse-geocoded against Overture address points where no free situs landbase exists. All buildings also carry lat/lon.",
         "available": {
             "bldg_sqft": True,
             "num_buildings": True,
             "year_built": True,
-            "land_sqft": False,        # not in LA open data
+            "land_sqft": False,        # not in CA open data
             "market_value": True,
-            "owner_occupancy": False,  # CA open data omits owner name/address (privacy)
+            "owner_occupancy": True,   # partial: SD/SBD owner names; CC/Riverside/Fresno mailing-based; LA/SF/Sac have none ('unknown')
         },
         "native_labels": {},
         "native_code_name": "LA use code",
